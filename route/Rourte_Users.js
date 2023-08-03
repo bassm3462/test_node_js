@@ -1,11 +1,13 @@
 const express=require("express");
-const {Register, login ,delete_user,update ,show}=require("../conteroller/mangement_usere");
+const {Register, login ,delete_user,update ,show}=require("../conteroller/conterollerUser");
 const router = express.Router();
+const upload=require("../middleware/upload");
+
 router.get("/",show);
 //register user
-router.get("/signup", Register);
+router.post("/signup",upload.single("image"), Register);
 //http://localhost:3001/api/signup
-router.get("/login",login);
+router.post("/login",login);
 //login
 // http://localhost:3001/api/login
 router.put("/update",update)
