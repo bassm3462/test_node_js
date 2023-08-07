@@ -5,7 +5,7 @@ const userSchema=mongoose.Schema({
     name:String,
     email:{type: String},
     password: { type : String}, //hashed version of the users's password to store secure
-    image:{type:String},
+    image:{type:String,default:"aveter.png"},
     code:{
         type: Boolean,
         default: false
