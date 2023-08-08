@@ -2,6 +2,7 @@ const { executionAsyncId } = require("async_hooks");
 const { error } = require("console");
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require('body-parser')
 const cors = require("cors");
 require("dotenv").config();
 const App = express();
@@ -20,6 +21,10 @@ mongoose
   .catch((error) => {
     console.log("failed", error);
   });
+  const jsonParser = bodyParser.json()
+
+// create application/x-www-form-urlencoded parser
+App.use(bodyParser.urlencoded({ extended: false }))
 App.use(express.static("upload_image_profile/"));
 App.use("/api/", require("./route/Rourte_Users"));
 App.get("/", (req, res) => {

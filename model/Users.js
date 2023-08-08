@@ -10,6 +10,10 @@ const userSchema=mongoose.Schema({
         type: Boolean,
         default: false
     },
+    user_type:{
+        type:Boolean,
+        default:false
+    },
     SECURITY_COD:{type:String}
 });
 const users=new mongoose.model("users",userSchema);

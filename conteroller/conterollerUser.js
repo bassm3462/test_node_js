@@ -10,7 +10,13 @@ const path = require("path");
 const fs = require("fs");
 const randomstring = require("randomstring");
 const { error } = require("console");
-const show = (req, res) => {
+
+const show = async (req, res) => {
+  console.log("tis is token",req.user)
+  const userid=req.user
+  const show_user = await users.findById(userid).then((response) => {
+    res.json({ response });
+  });
   res.send("show user");
 };
 // start Register
@@ -51,21 +57,21 @@ const Register = async (req, res) => {
     await createUser
       .save()
       .then((response) => {
-        // res.status(200).json({
-        //   response,
-        //   success: "add success",
-        //   dataobj:createUser
-        // });
-        let url = `http://127.0.0.1:3000/api/verifiction?id=${response._id}`;
+        res.status(200).json({
+          // response,
+          success: "add success",
+          dataobj: createUser,
+        });
+        // let url = `http://127.0.0.1:3000/api/verifiction?id=${response._id}`;
         // const message = `${url}/user/verify/${response._id}/${response.SECURITY_COD}`;
-        sendEmail(
-          createUser.email,
-          "Verify Email",
-          response.name,
-          response.SECURITY_COD,
-          url
-        );
-        res.send("An Email sent to your account please verify");
+        // sendEmail(
+        //   createUser.email,
+        //   "Verify Email",
+        //   response.name,
+        //   response.SECURITY_COD,
+        //   url
+        // );
+        // res.send("An Email sent to your account please verify");
       })
       .catch((error) => {
         console.log("Error", error);
@@ -125,15 +131,27 @@ const login = async (req, res) => {
   const check_user_password = await bcrypt
     .compare(password, check_user.password)
     .then((response) => {
-      const token = jwt.sign({ _id: check_user._id }, "tokenID", {
-        expiresIn: "1h",
-      });
-      res.status(200).json({
-        response,
-        token,
-        dataobj: check_user,
-        message: "login success",
-      });
+      if (check_user.user_type === false) {
+        const token = jwt.sign({ _id: check_user._id }, "tokenID", {
+          expiresIn: "1h",
+        });
+        res.header("x-access-token",token).json({
+          // response,
+          token,
+          dataobj: check_user,
+          message: "login success  user",
+        });
+      } else {
+        const token = jwt.sign({ _id: check_user._id }, "tokenID", {
+          expiresIn: "1d",
+        });
+        res.header("x-access-token",token).status(200).json({
+          // response,
+          token,
+          dataobj: check_user,
+          message: "login success admin",
+        });
+      }
     })
     .catch((error) => {
       return res.status(404).json({
@@ -176,12 +194,10 @@ const resat_password = async (req, res) => {
         { $set: { password: updatedata.password } }
       )
       .then((response) => {
-        res
-          .status(200)
-          .json({
-            message: "resat  password successfully",
-            dataobj: updatedata,
-          });
+        res.status(200).json({
+          message: "resat  password successfully",
+          dataobj: updatedata,
+        });
       })
       .catch((error) => {
         res.status.json({ message: "felid" });
@@ -218,7 +234,41 @@ const delete_user = (req, res) => {
     });
   // res.send("delete");
 };
-const update = (req, res) => {
+const update = async(req, res) => {
+  // const updateInformationUser={
+  //   name : req.body.name ,
+  //   email : req.body.email,
+  //   password:req.bod.password,
+  //   repeat_password:req.bod.repeat_password
+  // }
+  const {name,email,password,repeat_password}=req.body
+  // console.log(password, repeat_password);
+  if (password != repeat_password) {
+    return res
+      .status(404)
+      .json({ error: "repeat password must  mach to password" });
+    // console.log(password, repeat_password);
+  }
+  if (password.length < 8 || repeat_password.length < 8) {
+    return res
+      .status(501)
+      .json({ error: "Password must be at least 8 character or number" });
+  }
+  const user_email = await users.findOne({ email: req.body.email });
+    if (user_email) {
+      return res.status(404).json({ error: "this email already exist" });
+    }
+    const find_user=await users.findById(req.user)
+    if(find_user){
+  const updateUser=await users.updateOne({name:name,email:email,password:password,repeat_password:repeat_password}).exec().then(response=>{
+    res.status(200).json({
+      response,
+      update:"success"
+    })
+  }).catch(error=>{
+    console.log(error)
+  })
+}
   res.send("update profile");
 };
 module.exports = {
