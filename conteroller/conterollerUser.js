@@ -9,11 +9,11 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
 const randomstring = require("randomstring");
-const { error } = require("console");
+const { error, log } = require("console");
 
 const show = async (req, res) => {
-  console.log("tis is token",req.user)
-  const userid=req.user
+  console.log("tis is token", req.user);
+  const userid = req.user;
   const show_user = await users.findById(userid).then((response) => {
     res.json({ response });
   });
@@ -57,21 +57,21 @@ const Register = async (req, res) => {
     await createUser
       .save()
       .then((response) => {
-        res.status(200).json({
-          // response,
-          success: "add success",
-          dataobj: createUser,
-        });
-        // let url = `http://127.0.0.1:3000/api/verifiction?id=${response._id}`;
-        // const message = `${url}/user/verify/${response._id}/${response.SECURITY_COD}`;
-        // sendEmail(
-        //   createUser.email,
-        //   "Verify Email",
-        //   response.name,
-        //   response.SECURITY_COD,
-        //   url
-        // );
-        // res.send("An Email sent to your account please verify");
+        // res.status(200).json({
+        //   // response,
+        //   success: "add success",
+        //   dataobj: createUser,
+        // });
+        let url = `http://127.0.0.1:3000/api/verifiction?id=${response._id}`;
+        const message = `${url}/user/verify/${response._id}/${response.SECURITY_COD}`;
+        sendEmail(
+          createUser.email,
+          "Verify Email",
+          response.name,
+          response.SECURITY_COD,
+          url
+        );
+        res.send("An Email sent to your account please verify");
       })
       .catch((error) => {
         console.log("Error", error);
@@ -135,7 +135,7 @@ const login = async (req, res) => {
         const token = jwt.sign({ _id: check_user._id }, "tokenID", {
           expiresIn: "1h",
         });
-        res.header("x-access-token",token).json({
+        res.header("x-access-token", token).json({
           // response,
           token,
           dataobj: check_user,
@@ -145,7 +145,7 @@ const login = async (req, res) => {
         const token = jwt.sign({ _id: check_user._id }, "tokenID", {
           expiresIn: "1d",
         });
-        res.header("x-access-token",token).status(200).json({
+        res.header("x-access-token", token).status(200).json({
           // response,
           token,
           dataobj: check_user,
@@ -209,67 +209,117 @@ const resat_password = async (req, res) => {
 const delete_user = (req, res) => {
   const delete_user = users
     .findByIdAndRemove(req.params.id)
+    .exec()
     .then((response) => {
       if (!response) {
         return res.status(500).json({ message: "not found" });
+      } else {
+        const pathfile = path.join("upload_image_profile/", response.image);
+        deletefile(pathfile);
+        res.status(200).json({ data: { response }, message: "deleted" });
       }
-      return res.status(200).json({ data: { response }, message: "deleted" });
-      const pathfile = path.join("../upload_image_profile/", response.image);
-      const deletefile = (pathfile) => {
-        if (fs.existsSync(pathfile)) {
-          fs.unlinkSync(`${pathfile}`)
-            .then((response) => {
-              res.status(200).json({ message: "delete success" });
-            })
-            .catch((error) => {
-              res.send("err", error, "pathfile", pathfile);
-            });
-        } else {
-          res.status(404).json({ error: "file dos not exit", path });
-        }
-      };
     })
     .catch((error) => {
-      console.log("error", error, "req.body", req.body);
+      console.log("error", error);
     });
+  function deletefile(pathfile) {
+    if (fs.existsSync(pathfile)) {
+      fs.unlink(pathfile, (error) => {
+        if (!error) {
+          console.log("File deleted successfully");
+        } else {
+          throw new Error();
+        }
+      });
+    } else {
+      res.status(404).json({ error: "file dos not exit", path });
+    }
+  }
   // res.send("delete");
 };
-const update = async(req, res) => {
-  // const updateInformationUser={
-  //   name : req.body.name ,
-  //   email : req.body.email,
-  //   password:req.bod.password,
-  //   repeat_password:req.bod.repeat_password
-  // }
-  const {name,email,password,repeat_password}=req.body
-  // console.log(password, repeat_password);
-  if (password != repeat_password) {
-    return res
-      .status(404)
-      .json({ error: "repeat password must  mach to password" });
-    // console.log(password, repeat_password);
-  }
-  if (password.length < 8 || repeat_password.length < 8) {
-    return res
-      .status(501)
-      .json({ error: "Password must be at least 8 character or number" });
-  }
-  const user_email = await users.findOne({ email: req.body.email });
+const update = async (req, res) => {
+  try {
+    const { name, email, password, repeat_password } = req.body;
+    if (password != repeat_password) {
+      return res
+        .status(404)
+        .json({ error: "repeat password must  mach to password" });
+    }
+    if (password.length < 8 || repeat_password.length < 8) {
+      return res
+        .status(501)
+        .json({ error: "Password must be at least 8 character or number" });
+    }
+    const user_email = await users.findOne({ email: req.body.email });
     if (user_email) {
       return res.status(404).json({ error: "this email already exist" });
     }
-    const find_user=await users.findById(req.user)
-    if(find_user){
-  const updateUser=await users.updateOne({name:name,email:email,password:password,repeat_password:repeat_password}).exec().then(response=>{
-    res.status(200).json({
-      response,
-      update:"success"
-    })
-  }).catch(error=>{
-    console.log(error)
-  })
-}
-  res.send("update profile");
+    const salt = await bcrypt.genSalt(10);
+    cpassword = await bcrypt.hash(password, salt);
+    const updateUser = await users
+      .findByIdAndUpdate(
+        { _id: req.user },
+        {
+          $set: {
+            name: name,
+            email: email,
+            password: cpassword,
+            repeat_password: repeat_password,
+          },
+        },
+        { new: true }
+      )
+      .exec()
+      .then(async (response) => {
+        res.json({ dataobj: response });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+const update_image_profile = async (req, res) => {
+  try {
+    if (!req || !req.file) {
+      return res.status(404).json({ message: "pleas insert image" });
+    }
+    const imagede = req.body.imagede;
+    if (imagede !== "aveter.png") {
+      console.log(imagede);
+      const pathfile = path.join("upload_image_profile/", imagede);
+      deletefile(pathfile);
+    } else {
+      const user = await users
+        .findByIdAndUpdate(
+          { _id: req.user },
+          { $set: { image: req.file.filename } }
+        )
+        .exec()
+        .then((response) => {
+          res.status(200).json({ message: "update image successfully" });
+        })
+        .catch((error) => {
+          res.status(404).json({ message: "felid update image" });
+        });
+    }
+    function deletefile(pathfile) {
+      if (fs.existsSync(pathfile)) {
+        fs.unlink(pathfile, (error) => {
+          if (!error) {
+            console.log("File deleted successfully");
+          } else {
+            throw new Error();
+          }
+        });
+      } else {
+        res.status(404).json({ error: "file dos not exit", path });
+      }
+    }
+  } catch (error) {
+    console.log("update image profile", error.message);
+  }
 };
 module.exports = {
   Register,
@@ -280,6 +330,7 @@ module.exports = {
   verification,
   forgotpass,
   resat_password,
+  update_image_profile,
 };
 // git branch -M main
 // git push -u origin main

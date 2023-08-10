@@ -4,18 +4,17 @@ const mailtrap=require("mailtrap")
 const sendEmail =  async (email, subject,name,SECURITY_COD,url) => {
   try {
     const transporter =  nodemailer.createTransport({
-        host: "sandbox.smtp.mailtrap.io",
-      // host: "smtp.gmail.com",
+        // host: "sandbox.smtp.mailtrap.io",
+      host: "smtp.gmail.com",
       // port: 587,
       port: 2525,
       //   service: process.env.SERVICE,
-      //   port: 587,
         // secure: true,
       auth: {
-        // user: "bhasseim8@gmail.com",
-        // pass: "pwxehenexdgfmxhu",
-        user:"5b3bdfaacfc4be",
-        pass:"e836597d6b64c1"
+        user: "bhasseim8@gmail.com",
+        pass: "pwxehenexdgfmxhu",
+        // user:"5b3bdfaacfc4be",
+        // pass:"e836597d6b64c1"
         
       },
     });
