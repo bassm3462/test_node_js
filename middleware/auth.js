@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const check_user = (req, res, next) => {
-  const token = req.headers["x-access-token"];
+  const token = req.headers["token"];
   if (!token) {
     return res.status(401).json({
       message: "No token provided",
@@ -8,11 +8,12 @@ const check_user = (req, res, next) => {
   }
   try {
     var decoded = jwt.verify(token, "tokenID");
-    // console.log("decoded", decoded._id);
-    req.user = decoded._id;
+    req.user = decoded.id;
+    // console.log("decoded",req.user);
+
     next();
   } catch (err) {
-    //console.error(err,'error');
+    // console.error(err,'error');
     return res.status(500).json({
       error: err,
     });

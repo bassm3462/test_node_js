@@ -1,32 +1,52 @@
 const { executionAsyncId } = require("async_hooks");
 const { error } = require("console");
 const express = require("express");
+require("express-async-errors")
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser')
+const path = require("path")
 const cors = require("cors");
-require("dotenv").config();
+const cookieParser = require("cookie-parser");
+const { errorHandler } = require("./middleware/errorHandel");
+const dotenv = require("dotenv");
+const logger = require("./config/logger")
+dotenv.config()
 const App = express();
-App.use(cors());
+App.use(cors({
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 App.use(express.json());
 const port = 4000;
-const password = process.env.PASSSWORD;
-// console.log(password)
 mongoose
-  .connect(
-    "mongodb+srv://hbasseim8:FjWQqA0Nl7q5Su7h@cluster0.opbwfoc.mongodb.net/login"
-  )
+  .connect(process.env.CONECT)
   .then(() => {
     console.log("connection");
   })
   .catch((error) => {
-    console.log("failed", error);
+    logger.error("failed", error);
   });
-  const jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
+const jsonParser = bodyParser.json()
+App.use((req, res, next) => {
+  // res.setHeader(" Access-Control-Allow-Origin","*" );
+  // res.header("Access-Control-Allow-Methods",'GET,PUT,POST',
+  // "Access-Control-Allow-Headers",'Content-Type' ,'Accept','X-Requested-With');
+  next()
+});
+App.use(errorHandler)
+App.use(cookieParser());
 App.use(bodyParser.urlencoded({ extended: false }))
-App.use(express.static("upload_image_profile/"));
+App.use(express.static(path.join(__dirname, "upload_image_profile/")));
 App.use("/api/", require("./route/Rourte_Users"));
+App.use("/api/", require("./route/Department"));
+App.use("/api/", require("./route/Employ"));
+App.use("/api/",require("./route/Product"))
+App.use("/api/",require("./route/UplaodeImages"))
+
+
+App.all("*", (req, res) => {
+  return res.status(404).json({ mesage: "not found route " })
+})
 App.get("/", (req, res) => {
   res.send("<h1>Welcome to my API middleware</h1>");
 });
