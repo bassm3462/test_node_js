@@ -1,12 +1,15 @@
-const { boolean, string } = require("joi");
 const mongoose = require("mongoose");
 const timestamps = require("mongoose-timestamp");
-const Department=require("./Department_management ")
 const productsSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     image:String,
     departmentID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+      default: "none",
+    },
+    Image: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Department",
       default: "none",
@@ -26,11 +29,23 @@ const productsSchema = mongoose.Schema(
       type: Number,
       default:"0"
     },
-    totalPrice: {
-      type: String,
-      default: 0,
+    count: {
+      type: Number,
+      default:"0"
     },
+    discount:{
+      type:Number,
+      default:'1'
+    },
+    ratings: [
+      {
+        star: Number,
+        comment: String,
+        PostedBy: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+      },
+    ],
   },
+ 
   {
     timestamps: true,
   }

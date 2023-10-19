@@ -37,12 +37,13 @@ App.use(errorHandler)
 App.use(cookieParser());
 App.use(bodyParser.urlencoded({ extended: false }))
 App.use(express.static(path.join(__dirname, "upload_image_profile/")));
-App.use("/api/", require("./route/Rourte_Users"));
-App.use("/api/", require("./route/Department"));
-App.use("/api/", require("./route/Employ"));
-App.use("/api/",require("./route/Product"))
-App.use("/api/",require("./route/UplaodeImages"))
-
+App.use("/api/", require("./route/UsersR"));
+App.use("/api/", require("./route/DepartmentR"));
+App.use("/api/", require("./route/EmployR"));
+App.use("/api/",require("./route/ProductR"))
+App.use("/api/",require("./route/UplaodeImagesR"))
+App.use("/api/",require("./route/AboutR"))
+App.use("/api/",require("./route/ServicesR"))
 
 App.all("*", (req, res) => {
   return res.status(404).json({ mesage: "not found route " })

@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
   SECURITY_COD: { type: String },
   Phone: { type: String,  },
   Gender: { type: String,  },
-  Department:{ type: mongoose.Schema.Types.ObjectId,ref:"Department", default:"none" },
+  Department:{ type: mongoose.Schema.Types.ObjectId,ref:"Department", },
 });
 const users = new mongoose.model("users", userSchema);
 module.exports = users;
