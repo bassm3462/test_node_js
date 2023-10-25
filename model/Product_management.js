@@ -7,19 +7,16 @@ const productsSchema = mongoose.Schema(
     departmentID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Department",
-      default: "none",
     },
     Image: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Department",
-      default: "none",
     },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     UserID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
-      default: "none",
     },
     quantity: {
       type: Number,

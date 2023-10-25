@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const path = require("path")
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const { errorHandler } = require("./middleware/errorHandel");
+const { errorHandler,notFound } = require("./middleware/errorHandel");
 const dotenv = require("dotenv");
 const logger = require("./config/logger")
 dotenv.config()
@@ -27,12 +27,7 @@ mongoose
     logger.error("failed", error);
   });
 const jsonParser = bodyParser.json()
-App.use((req, res, next) => {
-  // res.setHeader(" Access-Control-Allow-Origin","*" );
-  // res.header("Access-Control-Allow-Methods",'GET,PUT,POST',
-  // "Access-Control-Allow-Headers",'Content-Type' ,'Accept','X-Requested-With');
-  next()
-});
+
 App.use(errorHandler)
 App.use(cookieParser());
 App.use(bodyParser.urlencoded({ extended: false }))
@@ -44,7 +39,8 @@ App.use("/api/",require("./route/ProductR"))
 App.use("/api/",require("./route/UplaodeImagesR"))
 App.use("/api/",require("./route/AboutR"))
 App.use("/api/",require("./route/ServicesR"))
-
+App.use("/api/",require("./route/Chat"))
+App.use("/api/",require("./route/Offers"))
 App.all("*", (req, res) => {
   return res.status(404).json({ mesage: "not found route " })
 })

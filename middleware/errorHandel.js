@@ -13,6 +13,7 @@ const notFound = (req, res, next) => {
       message: err?.message,
       stack: err?.stack,
     });
+    next()
   };
   
   module.exports = { errorHandler, notFound };
