@@ -1,5 +1,5 @@
 const express = require("express");
-const upload = require("../middleware/upload");
+const {upload} = require("../middleware/upload");
 const auth = require("../middleware/auth");
 const Route = express.Router();
 const { DepartmentInfo, show_Details, Delete, EditFile, EditDepartment,DepartmentDispalay } = require("../controller/controllerDepartment");
@@ -16,4 +16,3 @@ Route.put("/Department/Edit/image/:id",upload.single("image"), EditFile)
 Route.get("/Department/Display/:id",auth,DepartmentDispalay)
 //http://localhost:4000/api/Department/Display/:id
 module.exports = Route;
-

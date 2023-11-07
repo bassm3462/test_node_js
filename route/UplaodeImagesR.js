@@ -6,7 +6,7 @@ const {
     DispalyProductWithImage
 } = require("../controller/controllerUploadImage");
 const router = express.Router();
-const upload = require("../middleware/upload");
+const {upload} = require("../middleware/upload");
 const auth=require("../middleware/auth")
 router.get("/Employ/Product/arrayImage/:id" ,DisplayImage);
 // http://localhost:4000/api/Employ/Product/arrayImage/:id

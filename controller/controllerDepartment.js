@@ -51,7 +51,7 @@ const DepartmentDispalay = async (req, res) => {
     });
 };
 const Delete = (req, res) => {
-  const Delete = Department.findByIdAndRemove(req.params.id)
+  const Delete = Department.findByIdAndDelete(req.params.id)
     .exec()
     .then((response) => {
       if (!response) {

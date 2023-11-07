@@ -6,9 +6,7 @@ const fs = require("fs");
 const createProduct = async (req, res) => {
   const { name, departmentID, description, price, quantity } = req.body;
   console.log(req.body);
-  console.log(req.user);
-  const image = req.file.filename;
-  console.log(image);
+  const image=req.file.filename
   if (
     !name ||
     !image ||
@@ -43,7 +41,7 @@ const createProduct = async (req, res) => {
 };
 const DisplayProducts = async (req, res) => {
   await products
-    .find({ departmentID: req.params.id })
+    .find({ departmentID: req.params.id }).populate("departmentID")
     .then((response) => {
       return res.status(200).json({ response });
     })
@@ -54,7 +52,7 @@ const DisplayProducts = async (req, res) => {
 const DispalyProductAndDepartment = async (req, res) => {
   await products
     .find()
-    .populate("departmentID", "name , Category ,description,-_id")
+    .populate("departmentID")
     .exec()
     .then((response) => {
       return res.status(200).json({ response });
@@ -65,7 +63,7 @@ const DispalyProductAndDepartment = async (req, res) => {
 };
 const DisplaySingleProduct = async (req, res) => {
   await products
-    .findById(req.params.id)
+    .findById(req.params.id).populate("departmentID").exec()
     .then((response) => {
       return res.status(200).json({ response });
     })
@@ -73,11 +71,10 @@ const DisplaySingleProduct = async (req, res) => {
       return res.status(404).json({ error, message: "error display" });
     });
 };
-
 const DeleteProduct = async (req, res) => {
-  const DeletID = req.params.id;
+  const DeleteID = req.params.id;
   await products
-    .findByIdAndRemove(DeletID)
+    .findByIdAndDelete({DeleteID})
     .then(async (response) => {
       if (!response) {
         return res

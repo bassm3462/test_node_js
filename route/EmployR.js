@@ -1,6 +1,6 @@
 const express = require("express");
 const {Register,DisplayEmploy}=require("../controller/controllerEmploy")
-const upload = require("../middleware/upload");
+const {upload} = require("../middleware/upload");
 const router = express.Router();
 
 router.post("/admin/Employ", upload.single("image"), Register);

@@ -187,7 +187,7 @@ const resat_password = async (req, res) => {
 };
 const delete_user = async (req, res) => {
   await users
-    .findByIdAndRemove(req.params.id)
+    .findByIdAndDelete(req.params.id)
     .exec()
     .then((response) => {
       if (!response) {

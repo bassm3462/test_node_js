@@ -27,7 +27,6 @@ mongoose
     logger.error("failed", error);
   });
 const jsonParser = bodyParser.json()
-
 App.use(errorHandler)
 App.use(cookieParser());
 App.use(bodyParser.urlencoded({ extended: false }))

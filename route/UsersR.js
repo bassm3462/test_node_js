@@ -11,7 +11,7 @@ const {
   update_image_profile,
 } = require("../controller/conterollerUser");
 const router = express.Router();
-const upload = require("../middleware/upload");
+const {upload} = require("../middleware/upload");
 const auth = require("../middleware/auth");
 
 router.get("/dashboard",auth,show);
