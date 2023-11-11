@@ -13,6 +13,6 @@ Route.put("/Department/Edit/:id", EditDepartment)
 //http://localhost:4000/api/Department/Edit/:id
 Route.put("/Department/Edit/image/:id",upload.single("image"), EditFile)
 //http://localhost:4000/api/Department/Edit/image/:id
-Route.get("/Department/Display/:id",auth,DepartmentDispalay)
+Route.get("/Department/Display/:id",DepartmentDispalay)
 //http://localhost:4000/api/Department/Display/:id
 module.exports = Route;
