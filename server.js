@@ -17,7 +17,7 @@ App.use(cors({
   credentials: true,
 }));
 App.use(express.json());
-const port = 4000;
+const port = process.env.PORT;
 mongoose
   .connect(process.env.CONECT)
   .then(() => {
