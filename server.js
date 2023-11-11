@@ -40,12 +40,13 @@ App.use("/api/",require("./route/AboutR"))
 App.use("/api/",require("./route/ServicesR"))
 App.use("/api/",require("./route/Chat"))
 App.use("/api/",require("./route/Offers"))
-App.all("*", (req, res) => {
-  return res.status(404).json({ mesage: "not found route " })
-})
 App.get("/", (req, res) => {
   res.send("<h1>Welcome to my API middleware</h1>");
 });
+App.all("*", (req, res) => {
+  return res.status(404).json({ mesage: "not found route " })
+})
+
 App.listen(port, (req, res) => {
   console.log(`Server is running on http://127.0.0.1:${port}`);
 });
