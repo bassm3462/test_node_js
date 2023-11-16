@@ -1,34 +1,30 @@
 const nodemailer = require("nodemailer");
-const mailtrap=require("mailtrap")
 
-const sendEmail =  async (email, subject,name,SECURITY_COD,url) => {
+const sendEmail = async (email, subject, name, SECURITY_COD, url) => {
   try {
-    const transporter =  nodemailer.createTransport({
-        service:"gmail",
-        port:465,
-        debug:true,
-        secureConnection:false,
-        secure: true,
-        logger:true,
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      port: 465,
+      secure: true,
       auth: {
-        user:"bassmhu786@gmail.com",
-        // user: "bhasseim8@gmail.com",
-        // pass: "pwxehenexdgfmxhu",
-        pass:"xjdirfmepkjamfih",
-        // user:"5b3bdfaacfc4be",
-        // pass:"e836597d6b64c1"
+        user: 'bassmhu786@gmail.com',
+        pass: 'wxhjourcxgrdgtuy',
       },
-      tls:{
-        rejectUnauthorized : true}
+      tls: {
+        rejectUnauthorized: false, // Set to true if you want to reject unauthorized connections
+      },
     });
-     await transporter.sendMail({
+    const mailOptions = {
       from: '"Example Team" <bassmhu786@gmail.com>',
       to: email,
       subject: subject,
-      html:`<div style="width:300px;height:300px;background-color:#666666;border-radius: 15px"><p style="padding:10px"> hi ${name} pleas click to verify email <a href="${url}">${SECURITY_COD}</a> </p></div>`,
-    });
+      html: `<div style="width:300px;height:300px;border-radius: 15px"><p style="padding:10px"> Hi ${name}, please click to verify email <a href="${url}">${SECURITY_COD}</a> </p></div>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
   } catch (error) {
-    console.log(error);
+    console.error('Error sending email:', error);
   }
 };
 const Resat =  async (email, subject,name,token,url) => {
@@ -42,7 +38,7 @@ const Resat =  async (email, subject,name,token,url) => {
         // logger:true,
       auth: {
         user:"bassmhu786@gmail.com",
-        pass:"xjdirfmepkjamfih",
+        pass:"wxhjourcxgrdgtuy",
       },
       tls:{
         rejectUnauthorized : true}

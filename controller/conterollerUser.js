@@ -28,7 +28,7 @@ const show = async (req, res) => {
 const Register = async (req, res) => {
   const { name, email, password, repeat_password, Phone, Gender } = req.body;
   console.log(req.body);
-  if (!name || !email || !password || !repeat_password || !Phone ) {
+  if (!name || !email || !password || !repeat_password || !Phone) {
     return res.status(404).json({
       message: "Pleas Enter all information",
     });
@@ -69,8 +69,8 @@ const Register = async (req, res) => {
   await createUser
     .save()
     .then((response) => {
-      let url = `http://127.0.0.1:3000/api/verification?id=${response._id}`;
-      const message = `${url}/user/verify/${response._id}/${response.SECURITY_COD}`;
+      const url = `http://127.0.0.1:4000/api/verification/${response._id}`;
+      // const message = `${url}/user/verify/${response._id}/${response.SECURITY_COD}`;
       sendEmail(
         createUser.email,
         "Verify Email",
@@ -95,11 +95,11 @@ const Register = async (req, res) => {
 // start verification  from email
 const verification = async (req, res) => {
   try {
-    console.log(req.params["id"]);
-    const updateinfo = await users
-      .updateOne({ _id: req.params["id"] }, { $set: { code: true } })
+    console.log(req.params.id);
+    await users
+      .updateOne({ _id: req.params.id }, { $set: { code: true } })
       .then((response) => {
-        response, res.json({ message: "email is verifie" });
+        response, res.json({ message: "email is verifie" ,response});
       });
   } catch (error) {
     res.status(400).send("An error occured", error.message);

@@ -19,7 +19,7 @@ router.get("/dashboard",auth,show);
 router.post("/signup", upload.single("image"), Register);
 //http://localhost:4000/api/signup
 // verification
-router.put("/verification/:id", verification);
+router.get("/verification/:id", verification);
 //http://localhost:4000/api/verification/id
 //login
 router.post("/login", Login);
