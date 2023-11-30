@@ -69,7 +69,7 @@ const Register = async (req, res) => {
   await createUser
     .save()
     .then((response) => {
-      const url = `https://test-ecommerce-server.onrender.com/api/verification/${response._id}`;
+      const url = `http://127.0.0.1:4000/api/verification/${response._id}`;
       // const message = `${url}/user/verify/${response._id}/${response.SECURITY_COD}`;
       sendEmail(
         createUser.email,
