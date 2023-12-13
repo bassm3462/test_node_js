@@ -9,6 +9,7 @@ const {
   forgotpass,
   resat_password, 
   update_image_profile,
+  gitSingleUser
 } = require("../controller/conterollerUser");
 const router = express.Router();
 const {upload} = require("../middleware/upload");
@@ -24,6 +25,10 @@ router.get("/verification/:id", verification);
 //login
 router.post("/login", Login);
 // http://localhost:4000/api/login
+
+// get user
+router.get('/gitSingleUser/:id', gitSingleUser)
+
 router.post("/users/forgot_password",forgotpass)
 // http://localhost:4000/api/users/forgot_password
 router.get("/rest_password",resat_password)

@@ -12,6 +12,7 @@ const randomstring = require("randomstring");
 const { error, log } = require("console");
 const CreateToken = require("../config/createScureToken");
 const Department = require("../model/Department_management ");
+const ProcessorFile = require("../config/DeleteImage");
 const show = async (req, res) => {
   // console.log("tis is token", req.user);
   const userid = req.user;
@@ -162,7 +163,6 @@ const forgotpass = async (req, res) => {
       });
     });
 };
-
 const resat_password = async (req, res) => {
   try {
     const id = req.params["id"];
@@ -220,7 +220,24 @@ const delete_user = async (req, res) => {
     }
   }
 };
-
+// git userby id
+const gitSingleUser=async(req,res)=>{
+  const userId=req.params.id;
+  try{
+    const singleUser=await users.findById(userId).select('-password')
+    if(singleUser){
+      res.status(200).json({
+        success : true ,
+        singleUser
+      })
+    }
+    }catch(err){
+      res.status(500).json({
+        errr:err
+      })
+    }
+}
+// update information user without image 
 const update = async (req, res) => {
   try {
     const { name, email, password, repeat_password, Phone } = req.body;
@@ -267,23 +284,27 @@ const update = async (req, res) => {
     console.log(error.message);
   }
 };
-const update_image_profile = async (req, res) => {
+// update image profile
+const update_image_profile = async(req, res) => {
   try {
+    const imageEdit = req.body.imageEdit;
+
     if (!req || !req.file) {
-      return res.status(404).json({ message: "pleas insert image" });
+      return res.status(404).json({ message: "Pleas Select image" });
     }
-    const imagede = req.body.imagede;
-    const user = await users
+    console.log(imageEdit)
+console.log(req.file.filename);
+    await users
       .findByIdAndUpdate(
-        { _id: req.user },
+        { _id: req.params.id },
         { $set: { image: req.file.filename } }
       )
       .exec()
       .then((response) => {
-        if (imagede === "aveter.png") {
-          return res.status(200).json({ message: "update image successfully" });
+        if (imageEdit === "aveter.png") {
+          return res.status(200).json({response, message: "update image successfully" });
         }
-        const pathfile = path.join("upload_image_profile/", imagede);
+        const pathfile = path.join("upload_image_profile/", imageEdit);
         deletefile(pathfile);
         res.status(200).json({ message: "update image successfully" });
       })
@@ -291,23 +312,13 @@ const update_image_profile = async (req, res) => {
         res.status(404).json({ message: "felid update image" });
       });
     function deletefile(pathfile) {
-      if (fs.existsSync(pathfile)) {
-        fs.unlink(pathfile, (error) => {
-          if (!error) {
-            console.log("File deleted successfully");
-          } else {
-            throw new Error();
-          }
-        });
-      } else {
-        res.status(404).json({ error: "file dos not exit", path });
-      }
+      ProcessorFile(pathfile);
+      res.status(200).json({ message: "update image successfully" });
     }
   } catch (error) {
     console.log("update image profile", error.message);
   }
 };
-
 module.exports = {
   Register,
   Login,
@@ -318,6 +329,7 @@ module.exports = {
   forgotpass,
   resat_password,
   update_image_profile,
+  gitSingleUser
 };
 // git branch -M main
 // git push -u origin main
