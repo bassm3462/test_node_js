@@ -4,8 +4,14 @@ const users = require("../model/Users");
 const bcrypt = require("bcrypt");
 const { response } = require("express");
 const Register = async (req, res) => {
-    const { name, email, password, user_type, Phone, Gender,Department } = req.body;
+    const { name, email, password, user_type, Phone, Gender,Department ,active} = req.body;
+    let code=false;
     console.log( req.body)
+    if(active=="1"){
+       code=true
+    }else{
+     code =false
+    }
     if (!name || !email || !password || !user_type || !Phone || !Gender||!Department) {
         return res.status(404).json({ message: "Pleas Enter all information", });
     }
@@ -19,7 +25,7 @@ const Register = async (req, res) => {
     const user_email = await users.findOne({ email: req.body.email });
     if (user_email) { return res.status(404).json({ message: "this email already exist" }); }
     const createUser = new users({
-        name, email, password, Phone, Gender, user_type,Department
+        name, email, password, Phone, Gender, user_type,Department,code:code
     });
     const salt = await bcrypt.genSalt(10);
     createUser.password = await bcrypt.hash(createUser.password, salt);
